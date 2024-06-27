@@ -4,7 +4,17 @@ SCRIPT=$(dirname "$(realpath "$0")")
 SCRIPT="$SCRIPT/install-service.sh"
 
 if [ ! -f "$SCRIPT" ]; then
-  error "Script not found: $SCRIPT"
+  echo "Install script not found: $SCRIPT"
+  exit 1
 fi
 
-"$SCRIPT" portainer-server "$1" "$2"
+OWNER="$1"
+WORKDIR="$2"
+
+if [ -z "$OWNER" ] || [ -z "$WORKDIR" ]; then
+  echo "Missing owner or workdir."
+  echo "Usage: $0 <owner> <workdir>"
+  exit 1
+fi
+
+"$SCRIPT" portainer-server "$OWNER" "$WORKDIR"
