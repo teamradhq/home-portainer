@@ -16,15 +16,19 @@ error () {
   exit 1
 }
 
-if [ "$#" -ne 3 ]; then
-    error "Script requires three arguments."
-fi
+#if [ "$#" -ne 3 ]; then
+#    error "Script requires three arguments."
+#fi
 
 SERVICE_NAME=$1
 SERVICE="${SERVICE_NAME}.service"
-echo "Installing $SERVICE"
 
-WORKDIR=$(realpath "$2")
+OWNER=$2
+if ! id "$OWNER" &>/dev/null; then
+    error "User not found: $OWNER"
+fi
+
+WORKDIR=$(realpath "$3")
 if [ ! -d "$WORKDIR" ]; then
     error "Directory not found: $WORKDIR"
 fi
@@ -35,10 +39,7 @@ if [ ! -f "$TEMPLATE_FILE" ]; then
     error "Template file not found: $TEMPLATE_FILE"
 fi
 
-OWNER=$3
-if ! id "$OWNER" &>/dev/null; then
-    error "User not found: $OWNER"
-fi
+echo "Installing $SERVICE"
 
 # Parse template to systemd service target file.
 sed -e "s|{{WORKDIR}}|$WORKDIR|g" \
@@ -50,4 +51,6 @@ sudo chmod 644 "$TARGET_FILE"
 sudo systemctl daemon-reload
 sudo systemctl enable "$SERVICE_NAME"
 sudo systemctl reload "$SERVICE_NAME"
-sudo systemctl status "$SERVICE"
+sudo journalctl -u "$SERVICE_NAME" -n 10 --no-pager
+
+echo "$SERVICE installed successfully."
