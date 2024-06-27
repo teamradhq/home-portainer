@@ -67,3 +67,15 @@ sudo systemctl reload portainer-agent
 sudo systemctl status portainer-agent
 ```
 
+### Uninstall Services
+
+Call the `uninstall-service.sh` script with the service name to remove:
+
+```bash
+./bin/uninstall-service.sh portainer-agent
+./bin/uninstall-service.sh portainer-server
+```
+
+> **WARNING**
+> 
+> Make sure you provide the correct service name when calling this script. It will remove any matching service from `systemd` system directory. 
