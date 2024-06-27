@@ -1,7 +1,10 @@
 #!/bin/bash
 
 usage() {
+  echo -e "Install a systemd service."
+  echo
   echo -e  "Usage: $0 <service-name> <owner> <workdir>"
+  echo -e "        $0 awesome-things radical /opt/cool"
 }
 
 error () {
@@ -46,5 +49,5 @@ sudo chmod 644 "$TARGET_FILE"
 # Enable and start the service
 sudo systemctl daemon-reload
 sudo systemctl enable "$SERVICE_NAME"
-sudo systemctl start "$SERVICE_NAME"
+sudo systemctl reload "$SERVICE_NAME"
 sudo systemctl status "$SERVICE"
