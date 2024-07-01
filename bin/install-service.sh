@@ -16,10 +16,6 @@ error () {
   exit 1
 }
 
-#if [ "$#" -ne 3 ]; then
-#    error "Script requires three arguments."
-#fi
-
 SERVICE_NAME=$1
 SERVICE="${SERVICE_NAME}.service"
 
@@ -40,6 +36,15 @@ if [ ! -f "$TEMPLATE_FILE" ]; then
 fi
 
 echo "Installing $SERVICE"
+
+
+if systemctl list-unit-files | grep -q "^${SERVICE_NAME}"; then
+    echo "Service ${SERVICE_NAME} exists. Stopping and disabling it..."
+    sudo systemctl stop ${SERVICE_NAME}
+    sudo systemctl disable ${SERVICE_NAME}
+else
+    echo "Service ${SERVICE_NAME} does not exist."
+fi
 
 # Parse template to systemd service target file.
 sed -e "s|{{WORKDIR}}|$WORKDIR|g" \

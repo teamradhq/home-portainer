@@ -16,9 +16,6 @@ error () {
   exit 1
 }
 
-if [ "$#" -ne 3 ]; then
-    error "Script requires three arguments."
-fi
 
 SERVICE_NAME=$1
 SERVICE="${SERVICE_NAME}.service"
